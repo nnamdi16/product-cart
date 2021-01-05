@@ -11,8 +11,8 @@ priceSchema.statics = {
     const productPrice = new PriceModel(data);
     productPrice.save(cb);
   },
-  getPrice: async (query, cb) => {
-    await PriceModel.find(query, cb);
+  getPriceById: async (query, cb) => {
+    return await PriceModel.findById(query).exec();
   },
   // getByName: async (query, cb) => {
   //   await PriceModel.findOne(query, cb);
