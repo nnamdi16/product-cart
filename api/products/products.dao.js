@@ -19,14 +19,18 @@ productSchema.statics = {
     await Promise.all([newPrice.save(),products.save(cb)])
   },
   getProducts: async (query, cb) => {
-    await ProductModel.find(query, cb);
+    return await ProductModel.find(query, cb);
   },
   getProductByName: async (query, cb) => {
-    await ProductModel.findOne(query, cb);
+    return await ProductModel.findOne(query, cb);
   },
 
   getProductById: async (query, cb) => {
-    await ProductModel.findById(query, cb);
+    try {
+      return await ProductModel.findById(query).exec();
+    } catch (error) {
+      console.log(error);
+    }
   },
   // update: async function(query, updateData, cb) {
   //   await HerosModel.findOneAndUpdate(
