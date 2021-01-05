@@ -14,7 +14,7 @@
  */
 module.exports = {
     "ui": {
-        "port": 3001
+        "port": 3000
     },
     "files": ["**/*.css", "**/*.pug", "**/*.js"],
     "watchEvents": [
@@ -27,7 +27,7 @@ module.exports = {
         "ignoreInitial": true
     },
     "server": false,
-    "proxy": 'http://localhost:3000/api',
+    "proxy": 'http://localhost:4000/api',
     "port": 3000,
     "middleware": false,
     "serveStatic": [],
