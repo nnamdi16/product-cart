@@ -2,38 +2,28 @@ const {
   addToCart,
   getCart,
   // get,
-  // update,
+  updateCart,
   // delete: deleteHero
 } = require("./cart.dao");
-const {getProductById} = require('../products/products.dao')
+const {getPriceById} = require('../price/price.dao');
 
 exports.addToCart = async  (req, res, next) => {
-  const { productId, quantity, productType, price } = req.body;
-  console.log(productId);
-  let check;
-   await getProductById(productId, (err, productDetail) => {
-     check = productDetail;
-    if (!productDetail) {
-      return res.json({
-        error:true,
-        message:'Product does not exist'
+  try {
+    addToCart(req.body, (err,cart) => {
+      console.log(err);
+      if (err) {
+       return  res.json({
+          error:err
+        })
+      }
+     return  res.json({
+        message:'Product successfully added to cart'
       })
-    }
-
-  });
-  console.log(check);
-  return check;
-  
-  // addToCart(productId, (err, productCart) => {
-  //   if (err) {
-  //     res.json({
-  //       error: err
-  //     });
-  //   }
-  //   res.json({
-  //     message: "Product added to cart successfully"
-  //   });
-  // });
+    })
+ 
+  } catch (error) {
+    return res.status(500).json({error:error.toString()});
+  }
 };
 
 // exports.getCartDetails = async (req, res, next) => {
@@ -64,16 +54,16 @@ exports.getCartDetails = async function(req, res, next) {
   });
 };
 
-exports.updateCart = function(req, res, next) {
-  const { name, description } = req.body;
-  update({ _id: req.params.id }, { name, description }, function(err, hero) {
+exports.updateCart = (req, res, next) => {
+  const { quantity, reduce } = req.body;
+  updateCart({ _id: req.params.id }, { quantity }, reduce ,  function(err, cart) {
     if (err) {
       res.json({
         error: err
       });
     }
     res.json({
-      message: "Hero updated successfully"
+      message: "Cart updated successfully"
     });
   });
 };
