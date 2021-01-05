@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "nodemon ./bin/www"
+    "start": "nodemon ./bin/www",
+    "ui": "browser-sync start --config bs-config.js"
   },
   "dependencies": {
     "body-parser": "^1.19.0",
@@ -12,9 +13,12 @@
     "debug": "~2.6.9",
     "express": "~4.16.1",
     "http-errors": "~1.6.3",
-    "jade": "~1.11.0",
     "mongoose": "^5.9.2",
     "morgan": "~1.9.1",
-    "nodemon": "^2.0.2"
+    "pug": "^3.0.0"
+  },
+  "devDependencies": {
+    "browser-sync": "^2.26.13",
+    "nodemon": "^2.0.6"
   }
 }
