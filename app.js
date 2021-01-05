@@ -4,12 +4,16 @@
 const createError = require("http-errors");
 const express = require("express");
 const path = require("path");
+const expressSession = require("express-session");
+const passport = require("passport");
+const Auth0Strategy = require("passport-auth0");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const bodyParser = require("body-parser");
 const db = require("./api/config/database");
 const indexRouter = require("./routes/index");
 const usersRouter = require("./routes/users");
+require("dotenv").config();
 
 /**
  * App Variable
@@ -30,6 +34,42 @@ const bodyParserURLEncoded = bodyParser.urlencoded({
   extended: true
 });
 
+/**
+ * Session Configuration
+ */
+
+ const session = {
+   secret: process.env.SESSION_SECRET,
+   cookie: {},
+   resave: false,
+   saveUninitialized:false
+ };
+
+ const strategy = new Auth0Strategy(
+   {
+     domain: process.env.AUTH0_DOMAIN,
+     clientID: process.env.AUTH0_CLIENT_ID,
+     clientSecret: process.env.AUTH0_CLIENT_SECRET,
+     callbackURL:process.env.AUTH0_CALLBACK_URL
+   }, 
+   (accessToken, refreshToken, extraParams, profile, done) => {
+      /**
+       * Access tokens are used to authorixe users to an API(resource server)
+       * accessToken is the token to call the the Auth0 API
+       * or a secured third-party API
+       * extraParams.id_token has the JSON Web Token
+       * profile has all the information from the user
+       */
+      console.log(accessToken,refreshToken,extraParams,profile);
+       return done(null, profile);
+   }
+ );
+
+ if (app.get("env") === "production") {
+  //  Serve secure cookies, require HTTPS
+  session.cookie.secure = true
+ }
+
 //Initialize express Router
 const router = express.Router();
 
@@ -48,10 +88,29 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
+app.use(expressSession(session));
+passport.use(strategy);
+app.use(passport.initialize());
+app.use(passport.session());
+
+passport.serializeUser((user,done)=> {
+  done(null, user);
+});
+
+
+passport.serializeUser((user,done) => {
+  done(null, user)
+});
+
+app.use((req,res,next) => {
+  res.locals.isAuthenticated = req.isAuthenticated();
+  next();
+})
+
 console.log(path.join(__dirname, "views"));
 // router.use("/", indexRouter);
-router.use("/users", usersRouter);
 router.use("/api", indexRouter);
+router.use("/user", usersRouter);
 router.use("/product", productRoutes);
 router.use("/cart",cartRoutes);
 
