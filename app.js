@@ -1,14 +1,20 @@
-var createError = require("http-errors");
-var express = require("express");
-var path = require("path");
-var cookieParser = require("cookie-parser");
-var logger = require("morgan");
-var bodyParser = require("body-parser");
+/**
+ * Required External Modules
+ */
+const createError = require("http-errors");
+const express = require("express");
+const path = require("path");
+const cookieParser = require("cookie-parser");
+const logger = require("morgan");
+const bodyParser = require("body-parser");
 const db = require("./api/config/database");
-var indexRouter = require("./routes/index");
-var usersRouter = require("./routes/users");
+const indexRouter = require("./routes/index");
+const usersRouter = require("./routes/users");
 
-var app = express();
+/**
+ * App Variable
+ */
+const app = express();
 
 //Product routes
 const productRoutes = require("./api/products/products.routes");
@@ -16,6 +22,7 @@ const productRoutes = require("./api/products/products.routes");
 //Cart Routes
 
 const cartRoutes = require("./api/cart/cart.routes");
+
 
 //configure body-parser
 const bodyParserJSON = bodyParser.json();
@@ -29,8 +36,10 @@ const router = express.Router();
 db();
 
 // view engine setup
+
+app.set('view engine', 'pug')
 app.set("views", path.join(__dirname, "views"));
-app.set("view engine", "jade");
+// app.set("view engine", "jade");
 
 app.use(logger("dev"));
 app.use(bodyParserJSON);
@@ -39,11 +48,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
-
+console.log(path.join(__dirname, "views"));
 // router.use("/", indexRouter);
-// router.use("/users", usersRouter);
+router.use("/users", usersRouter);
+router.use("/api", indexRouter);
 router.use("/product", productRoutes);
-router.use("/cart",cartRoutes)
+router.use("/cart",cartRoutes);
+
 
 app.use("/", router);
 
