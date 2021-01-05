@@ -31,7 +31,7 @@ exports.createProduct = (req, res, next) => {
 
 exports.getProductByName = async function(req, res, next) {
   const name = req.params.name;
- 
+  
   await getProductByName({ name }, (err, products) => {
     if (err) {
       res.json({
